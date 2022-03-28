@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "api_marketing_automation.fullname" . }}
+  labels:
+    app: {{ template "api_marketing_automation.name" . }}
+    chart: {{ template "api_marketing_automation.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  #replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "api_marketing_automation.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "api_marketing_automation.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      securityContext:
+         fsGroup: 101
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: TZ
+              value: "Asia/Dubai"
+
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

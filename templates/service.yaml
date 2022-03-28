@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "api_marketing_automation.fullname" . }}
+  labels:
+    app: {{ template "api_marketing_automation.name" . }}
+    chart: {{ template "api_marketing_automation.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }} 
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "api_marketing_automation.name" . }}
+    release: {{ .Release.Name }}

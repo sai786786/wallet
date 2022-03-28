@@ -1,0 +1,54 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+# Overwrite chart name
+# nameOverride:
+# replicas: 1
+image:
+  repository: URL
+  tag: 21.0.1.20
+  pullPolicy: Always
+restartPolicy: Always
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "1.5Gi"
+    filebeatCPU: "200m"
+    filebeatMemory: "250Mi"
+  limits:
+    cpu: "750m"
+    memory: "2.5Gi"
+    filebeatCPU: "300m"
+    filebeatMemory: "500Mi"
+
+service:
+  port: 80
+  targetPort: 9001
+#  name: cards
+
+ingress:
+  enabled: true
+  path: "/"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    #kubernetes.io/tls-acme: "true"
+
+hpa:
+  minCount: 1
+  maxCount: 1
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageValue: 1200Mi # 80% of memory limit value
+      
+config:
+  elasticsearch: "sandbox4_pods"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
